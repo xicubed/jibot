@@ -1,15 +1,15 @@
---- 
-Administrator: 
-  authentication: 
+---
+Administrator:
+  authentication:
     type: nick
-    nicks: 
+    nicks:
        - imajes
        - wiredfool
        - buridan
        - kevinmarks
        - joiito
   class: Administrator
-Insulter: 
+Insulter:
   class: Insulter
 Heralder:
   class: Heralder

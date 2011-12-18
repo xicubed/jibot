@@ -8,28 +8,28 @@ module Autumn
 
   class Foliater
     include Singleton
-  
+
     # The Speciator singleton.
     attr_reader :config
     # A hash of all Stem instances by their config names.
     attr_reader :stems
     # A hash of all Leaf instances by their config names.
     attr_reader :leaves
-  
+
     def initialize # :nodoc:
       @config = Speciator.instance
       @stems = Hash.new
       @leaves = Hash.new
       @ctcp = Autumn::CTCP.new
     end
-    
+
     # Loads the config files and their classes, initializes all stems and leaves
     # and begins the stems' execution processes in their own threads. You must
     # pass the stem and leaf config hashes (from the stems.yml and leaves.yml
     # files).
     #
     # If +invoke+ is set to false, start_stems will not be called.
-    
+
     def load(stem_config, leaf_config, invoke=true)
       load_configs stem_config, leaf_config
       load_leaf_classes
@@ -38,11 +38,11 @@ module Autumn
       load_stems
       start_stems if invoke
     end
-    
+
     # Reloads a leaf while it is running. Re-opens class definition files and
     # runs them to redefine the classes. Does not work exactly as it should,
     # but well enough for a rough hot-reload capability.
-    
+
     def hot_reload(leaf)
       type = leaf.class.to_s.split('::').first
       load_leaf_controller type
@@ -52,16 +52,16 @@ module Autumn
     end
 
     # Returns true if there is at least one stem still running.
-  
+
     def alive?
       @stem_threads and @stem_threads.any? { |name, thread| thread.alive? }
     end
-    
+
     # This method yields each Stem that was loaded, allowing you to iterate over
     # each stem. For instance, to take attendance:
     #
     #  Foliater.instance.each_stem { |stem| stem.message "Here!" }
-  
+
     def each_stem
       @leaves.each { |leaf| yield leaf }
     end
@@ -70,13 +70,13 @@ module Autumn
     # iterate over each leaf. For instance, to take attendance:
     #
     #  Foliater.instance.each_leaf { |leaf| leaf.stems.message "Here!" }
-  
+
     def each_leaf
       @leaves.each { |leaf| yield leaf }
     end
 
     private
-    
+
     def load_configs(stem_config, leaf_config)
       leaf_config.each do |name, options|
         global_config_file = "leaves/#{options['class'].snakecase}/config.yml"
@@ -91,19 +91,19 @@ module Autumn
         config.stem name, :logger => LogFacade.new(config.global(:logfile), 'Stem', name)
       end
     end
-    
+
     def load_leaf_classes
       config.all_leaf_classes.each do |type|
         Object.class_eval "module #{type}; end"
-        
+
         config.leaf type, :module => Object.const_get(type)
-        
+
         load_leaf_controller(type)
         load_leaf_helpers(type)
         load_leaf_views(type)
       end
     end
-    
+
     def load_leaf_controller(type)
       controller_file = "leaves/#{type.snakecase}/controller.rb"
       raise "controller.rb file for leaf #{type} not found" unless File.exist? controller_file
@@ -115,7 +115,7 @@ module Autumn
       end
       config.leaf(type, :module).module_eval controller_code
     end
-    
+
     def load_leaf_helpers(type)
       mod = config.leaf(type, :module)
       helper_code = nil
@@ -123,20 +123,20 @@ module Autumn
         File.open(helper_file, 'r') { |f| helper_code = f.read }
         mod.module_eval helper_code
       end
-      
+
       leaf_class = nil
       begin
         leaf_class = mod.const_get('Controller')
       rescue NameError
         raise NameError, "Couldn't find Controller class for leaf #{type}"
       end
-      
+
       config.leaf type, :helpers => Set.new
       mod.constants.select { |const_name| const_name =~ /Helper$/ }.map { |helper_name| mod.const_get helper_name }.each do |helper|
         config.leaf(type, :helpers) << helper
       end
     end
-    
+
     def load_leaf_views(type)
       views = Hash.new
       view_text = nil
@@ -147,7 +147,7 @@ module Autumn
       end
       config.leaf type, :views => views
     end
-    
+
     def load_leaves
       config.each_leaf do |name, options|
         options = config.options_for_leaf(name)
@@ -165,11 +165,11 @@ module Autumn
         # extend the formatter first so helper methods override its methods if necessary
       end
     end
-    
+
     def load_all_leaf_models
       @leaves.each { |name, instance| load_leaf_models instance }
     end
-    
+
     def load_leaf_models(leaf)
       model_code = nil
       mod = config.leaf(leaf.options[:class], :module)
@@ -187,13 +187,13 @@ module Autumn
         end
       end
     end
-    
+
     def load_stems
       config.each_stem do |name, options|
         options = config.options_for_stem(name)
         server = options[:server]
         nick = options[:nick]
-        
+
         @stems[name] = Stem.new(server, nick, options)
         leaves = options[:leaves]
         leaves ||= [ options[:leaf] ]
@@ -206,7 +206,7 @@ module Autumn
         end
       end
     end
-    
+
     def start_stems
       @leaves.each { |name, leaf| leaf.preconfigure }
       @leaves.each { |name, leaf| leaf.will_start_up }
@@ -226,6 +226,6 @@ module Autumn
         end
       end
     end
-    
+
   end
 end

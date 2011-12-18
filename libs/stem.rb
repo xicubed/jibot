@@ -6,7 +6,7 @@ require 'openssl'
 require 'facets/annotations'
 
 module Autumn
-  
+
   # A connection to an IRC server. The stem acts as the IRC client on which a
   # Leaf runs. It receives messages from the IRC server and sends messages to
   # the server. Stem is compatible with many IRC daemons; details of the IRC
@@ -107,11 +107,11 @@ module Autumn
   #    def irc_rpl_namreply_response(stem, sender, recipient, arguments, msg)
   #      [...]
   #    end
-  #    
+  #
   #    def irc_rpl_endofnames_response(stem, sender, recipient, arguments, msg)
   #      [...]
   #    end
-  #    
+  #
   #    ann :irc_rpl_namreply_response, :stem_sync => true
   #    ann :irc_rpl_endofnames_response, :stem_sync => true
   #  end
@@ -134,21 +134,21 @@ module Autumn
 
   class Stem
     include StemFacade
-    
+
     # Describes all possible channel names. Omits the channel prefix, as that
     # can vary from server to server. (See channel?)
     CHANNEL_REGEX = "[^\\s\\x7,:]+"
     # Describes all possible nicks.
     NICK_REGEX = "[a-zA-Z][a-zA-Z0-9\\-_\\[\\]\\{\\}\\\\|`\\^]+"
-  
+
     # A parameter in an IRC command.
-  
+
     class Parameter # :nodoc:
       attr :name
       attr :required
       attr :colonize
       attr :list
-    
+
       def initialize(newname, options={})
         @name = newname
         @required = options[:required] or true
@@ -156,11 +156,11 @@ module Autumn
         @list = options[:list] or false
       end
     end
-  
+
     def self.param(name, opts={}) # :nodoc:
       Parameter.new(name, opts)
     end
-  
+
     # Valid IRC command names, mapped to information about their parameters.
     IRC_COMMANDS = {
       :pass => [ param('password') ],
@@ -168,7 +168,7 @@ module Autumn
       :user => [ param('user'), param('host'), param('server'), param('name') ],
       :oper => [ param('user'), param('password') ],
       :quit => [ param('message', :required => false, :colonize => true) ],
-    
+
       :join => [ param('channels', :list => true), param('keys', :list => true) ],
       :part => [ param('channels', :list => true) ],
       :mode => [ param('channel/nick'), param('mode'), param('limit', :required => false), param('user', :required => false), param('mask', :required => false) ],
@@ -177,7 +177,7 @@ module Autumn
       :list => [ param('channels', :required => false, :list => true), param('server', :required => false) ],
       :invite => [ param('nick'), param('channel') ],
       :kick => [ param('channels', :list => true), param('users', :list => true), param('comment', :required => false, :colonize => true) ],
-    
+
       :version => [ param('server', :required => false) ],
       :stats => [ param('query', :required => false), param('server', :required => false) ],
       :links => [ param('server/mask', :required => false), param('server/mask', :required => false) ],
@@ -186,17 +186,17 @@ module Autumn
       :trace => [ param('server', :required => false) ],
       :admin => [ param('server', :required => false) ],
       :info => [ param('server', :required => false) ],
-    
+
       :privmsg => [ param('receivers', :list => true), param('message', :colonize => true) ],
       :notice => [ param('nick'), param('message', :colonize => true) ],
-    
+
       :who => [ param('name', :required => false), param('is mask', :required => false) ],
       :whois => [ param('server/nicks', :list => true), param('nicks', :list => true, :required => false) ],
       :whowas => [ param('nick'), param('history count', :required => false), param('server', :required => false) ],
-    
+
       :pong => [ param('code', :required => false, :colonize => true) ]
     }
-    
+
     # The address of the server this stem is connected to.
     attr :server
     # The remote port that this stem is connecting to.
@@ -221,7 +221,7 @@ module Autumn
     attr :server_type
     # A hash of channel members by channel name.
     attr :channel_members
-    
+
     # Creates an instance that connects to a given IRC server and requests a
     # given nick. Valid options:
     #
@@ -259,10 +259,10 @@ module Autumn
     #
     # Any channel name can be a one-item hash, in which case it is taken to be
     # a channel name-channel password association.
-  
+
     def initialize(server, newnick, opts)
       raise ArgumentError, "Please specify at least one channel" unless opts[:channel] or opts[:channels]
-      
+
       @nick = newnick
       @server = server
       @port = opts[:port]
@@ -285,7 +285,7 @@ module Autumn
       end
       @server_type = Daemon[opts[:server_type]]
       @server_type ||= Daemon.default
-      
+
       @channels = Set.new
       @channels.merge opts[:channels] if opts[:channels]
       @channels << opts[:channel] if opts[:channel]
@@ -302,12 +302,12 @@ module Autumn
       @channels.map! { |chan| chan.kind_of?(Hash) ? chan.keys.only : chan }
       @channel_members = Hash.new
       @updating_channel_members = Hash.new # stores the NAMES list as its being built
-      
+
       @chan_mutex = Mutex.new
       @join_mutex = Mutex.new
       @socket_mutex = Mutex.new
     end
-    
+
     # Adds an object that will receive notifications of incoming IRC messages.
     # For each IRC event that the listener is interested in, the listener should
     # implement a method in the form <tt>irc_[event]_event</tt>, where [event]
@@ -397,12 +397,12 @@ module Autumn
     # Your listener can implement the +stem_ready+ method, which will be called
     # once the stem has started up, connected to the server, and joined all its
     # channels. This method is passed the stem instance.
-  
+
     def add_listener(obj)
       @listeners << obj
       obj.respond :added, self
     end
-    
+
     # Sends the method with the name +meth+ (a symbol) to all listeners that
     # respond to that method. You can optionally specify one or more arguments.
     # This method is meant for use by <b>listener plugins</b>: listeners that
@@ -419,7 +419,7 @@ module Autumn
     # exceptions will be caught and reported. This method will only invoke
     # listener methods that have _not_ been marked as synchronized. (See
     # "Synchronous Methods" in the class docs.)
-    
+
     def broadcast(meth, *args)
       @listeners.select { |listener| not listener.class.ann(meth, :stem_sync) }.each do |listener|
         Thread.new do
@@ -432,14 +432,14 @@ module Autumn
         end
       end
     end
-    
+
     # Same as the broadcast method, but only invokes listener methods that
     # _have_ been marked as synchronized.
-    
+
     def broadcast_sync(meth, *args)
       @listeners.select { |listener| listener.class.ann(meth, :stem_sync) }.each { |listener| listener.respond meth, *args }
     end
-  
+
     # Opens a connection to the IRC server and begins listening on it. This
     # method runs until the socket is closed, and should be run in a thread. It
     # will terminate when the connection is closed. No messages should be
@@ -447,7 +447,7 @@ module Autumn
     #
     # In the event that the nick is unavailable, the +nick_generator+ proc will
     # be called.
-  
+
     def start
       # Synchronous (mutual exclusion) message processing is handled by a
       # producer-consumer approach. The socket pushes messages onto this queue,
@@ -463,17 +463,17 @@ module Autumn
           end
         end
       end
-      
+
       @socket = connect
       username = @options[:user]
       username ||= @nick
       realname = @options[:name]
       realname ||= @nick
-    
+
       pass @options[:server_password] if @options[:server_password]
       user username, @nick, @nick, realname
       nick @nick
-      
+
       while line = @socket.gets
         meths = receive line # parse the line and get a list of methods to call
         @messages.push meths # push the methods on the queue; the consumer thread will execute all the synchronous methods
@@ -481,28 +481,28 @@ module Autumn
         meths.each { |meth, args| broadcast meth, *args }
       end
     end
-    
+
     # Returns true if this stem has started up completely, connected to the IRC
     # server, and joined all its channels. A period of 10 seconds is allowed to
     # join all channels, after which the stem will report ready even if some
     # channels could not be joined.
-    
+
     def ready?
       @ready == true
     end
-    
+
     # Normalizes a channel name by placing a "#" character before the name if no
     # channel prefix is otherwise present. Also converts the name to lowercase
     # if the +case_sensitive_channel_names+ option is false. You can suppress
     # the automatic prefixing by passing false for +add_prefix+.
-    
+
     def normalized_channel_name(channel, add_prefix=true)
       norm_chan = channel.dup
       norm_chan.downcase! unless options[:case_sensitive_channel_names]
       norm_chan = "##{norm_chan}" unless server_type.channel_prefix?(channel[0,1]) or not add_prefix
       return norm_chan
     end
-  
+
     def method_missing(meth, *args) # :nodoc:
       if IRC_COMMANDS.include? meth then
         param_info = IRC_COMMANDS[meth]
@@ -521,25 +521,25 @@ module Autumn
         super
       end
     end
-    
+
     # Given a full channel name, returns the channel type as a symbol. Values
     # can be found in the Daemons instance. Returns <tt>:unknown</tt> for
     # unknown channel types.
-    
+
     def channel_type(channel)
       type = server_type.channel_prefix[channel[0,1]]
       type ? type : :unknown
     end
-    
+
     # Returns true if the string appears to be a channel name.
-    
+
     def channel?(str)
       prefixes = Regexp.escape(server_type.channel_prefix.keys.join)
       str.match("[#{prefixes}]#{CHANNEL_REGEX}") != nil
     end
-    
+
     # Returns true if the string appears to be a nickname.
-    
+
     def nick?(str)
       str.match(NICK_REGEX) != nil
     end
@@ -549,18 +549,18 @@ module Autumn
     def nickname
       @nick
     end
-    
+
     def inspect # :nodoc:
       "#<#{self.class.to_s} #{server}:#{port}>"
     end
-  
+
     protected
-    
+
     def irc_ping_event(stem, sender, arguments) # :nodoc:
       arguments[:message].nil? ? pong : pong(arguments[:message])
     end
     ann :irc_ping_event, :stem_sync => true # To avoid overhead of a whole new thread just for a pong
-    
+
     def irc_rpl_yourhost_response(stem, sender, recipient, arguments, msg) # :nodoc:
       return if options[:server_type]
       type = nil
@@ -574,35 +574,35 @@ module Autumn
         end
       end
       return unless type
-      @server_type = Daemon[type] 
+      @server_type = Daemon[type]
       logger.info "Auto-detected #{type} server daemon type"
     end
     ann :irc_rpl_yourhost_response, :stem_sync => true # So methods that synchronize can be guaranteed the host is known ASAP
-    
+
     def irc_err_nicknameinuse_response(stem, sender, recipient, arguments, msg) # :nodoc:
       return unless nick_generator
       newnick = nick_generator.call(arguments[0])
       nick newnick if newnick
     end
-    
+
     def irc_rpl_endofmotd_response(stem, sender, recipient, arguments, msg) # :nodoc:
       post_startup
     end
-    
+
     def irc_err_nomotd_response(stem, sender, recipient, arguments, msg) # :nodoc:
       post_startup
     end
-    
+
     def irc_rpl_namreply_response(stem, sender, recipient, arguments, msg) # :nodoc:
       update_names_list normalized_channel_name(arguments[1]), msg.words unless arguments[1] == "*" # "*" refers to users not on a channel
     end
     ann :irc_rpl_namreply_response, :stem_sync => true # So endofnames isn't processed before namreply
-    
+
     def irc_rpl_endofnames_response(stem, sender, recipient, arguments, msg) # :nodoc:
       finish_names_list_update normalized_channel_name(arguments[0])
     end
     ann :irc_rpl_endofnames_response, :stem_sync => true # so endofnames isn't processed before namreply
-    
+
     def irc_kick_event(stem, sender, arguments) # :nodoc:
       if arguments[:recipient] == @nick then
         @chan_mutex.synchronize do
@@ -618,12 +618,12 @@ module Autumn
       end
     end
     ann :irc_kick_event, :stem_sync => true # So methods that synchronize can be guaranteed the channel variables are up to date
-    
+
     def irc_mode_event(stem, sender, arguments) # :nodoc:
       names arguments[:channel] if arguments[:parameter] and server_type.privilege_mode?(arguments[:mode])
     end
     ann :irc_mode_event, :stem_sync => true # To avoid overhead of a whole new thread for a names reply
-    
+
     def irc_join_event(stem, sender, arguments) # :nodoc:
       if sender[:nick] == @nick then
         should_broadcast = false
@@ -653,7 +653,7 @@ module Autumn
       end
     end
     ann :irc_join_event, :stem_sync => true # So methods that synchronize can be guaranteed the channel variables are up to date
-    
+
     def irc_part_event(stem, sender, arguments) # :nodoc:
       @chan_mutex.synchronize do
         if sender[:nick] == @nick then
@@ -665,7 +665,7 @@ module Autumn
       end
     end
     ann :irc_part_event, :stem_sync => true # So methods that synchronize can be guaranteed the channel variables are up to date
-    
+
     def irc_nick_event(stem, sender, arguments) # :nodoc:
       @nick = arguments[:nick] if sender[:nick] == @nick
       @chan_mutex.synchronize do
@@ -682,9 +682,9 @@ module Autumn
       end
     end
     ann :irc_quit_event, :stem_sync => true # So methods that synchronize can be guaranteed the channel variables are up to date
-    
+
     private
-  
+
     def connect
       logger.debug "Connecting to #{@server}:#{@port}..."
       socket = TCPSocket.new @server, @port, @local_ip
@@ -699,7 +699,7 @@ module Autumn
       ssl_socket.connect
       return ssl_socket
     end
-  
+
     def transmit(comm)
       @socket_mutex.synchronize do
         raise "IRC connection not opened yet" unless @socket
@@ -707,12 +707,12 @@ module Autumn
         @socket.puts comm
       end
     end
-  
+
     # Parses a message and returns a hash of methods to their arguments
     def receive(comm)
       meths = Hash.new
       logger.debug "<< " + comm
-    
+
       if comm =~ /^:(.+?)\s+NOTICE\s+(\S+)\s+:(.+?)[\r\n]$/
         server, sender, msg = $1, $2, $3
         meths[:irc_server_notice] = [ self, server, sender, msg ]
@@ -732,7 +732,7 @@ module Autumn
       elsif comm =~ /^:(.+?)\s+(\d+)\s+(.*?)[\r\n]*$/ then
         server, code, arg_str = $1, $2, $3
         arg_array, msg = split_out_message(arg_str)
-        
+
         numeric_method = "irc_#{code}_response".to_sym
         readable_method = "irc_#{server_type.event[code.to_i]}_response".to_sym if not code.to_i.zero? and server_type.event?(code.to_i)
         name = arg_array.shift
@@ -744,14 +744,14 @@ module Autumn
         logger.error "Couldn't parse IRC message: #{comm}"
         return meths
       end
-      
+
       if arg_str then
         arg_array, msg = split_out_message(arg_str)
       else
         arg_array = Array.new
       end
       command = command.downcase.to_sym
-    
+
       case command
         when :nick then
           arguments = { :nick => arg_array.at(0) }
@@ -800,20 +800,20 @@ module Autumn
       end
       arguments.update :message => msg
       arguments[:channel] = normalized_channel_name(arguments[:channel]) if arguments[:channel]
-    
+
       method = "irc_#{command}_event".to_sym
       meths[method] = [ self, sender, arguments ]
       meths[:irc_event] = [ self, command, sender, arguments ]
       return meths
     end
-    
+
     def split_out_message(arg_str)
       arg_str, *msg = arg_str.split(':')
       msg = msg.join(':')
       arg_array = arg_str.to_s.strip.words
       return arg_array, msg
     end
-    
+
     def post_startup
       @ready_thread = Thread.new do
         sleep 10
@@ -834,7 +834,7 @@ module Autumn
       @channels_to_join.each { |chan| join chan }
       privmsg 'NickServ', "IDENTIFY #{options[:password]}" if options[:password]
     end
-    
+
     def update_names_list(channel, names)
       @chan_mutex.synchronize do
         @updating_channel_members[channel] ||= Hash.new
@@ -843,13 +843,13 @@ module Autumn
         end
       end
     end
-    
+
     def finish_names_list_update(channel)
       @chan_mutex.synchronize do
         @channel_members[channel] = @updating_channel_members.delete(channel) if @updating_channel_members[channel]
       end
     end
-    
+
     def drop_channel(channel)
       @channels.delete channel
       @channel_passwords.delete channel

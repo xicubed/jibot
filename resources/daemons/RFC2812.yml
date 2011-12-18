@@ -1,5 +1,5 @@
---- 
-event: 
+---
+event:
   478: :err_banlistfull
   346: :rpl_invitelist
   247: :rpl_statsbline
@@ -30,7 +30,7 @@ event:
   235: :rpl_servlistend
   4: :rpl_myinfo
   263: :rpl_tryagain
-usermode: 
+usermode:
   a: :away
   O: :local_operator
   r: :restricted

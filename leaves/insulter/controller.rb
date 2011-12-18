@@ -4,21 +4,21 @@ require 'facets/random'
 # substrings and chooses from them randomly.
 
 class Controller < Autumn::Leaf
-  
+
   # Insults the unfortunate argument of this command.
-  
+
   def insult_command(stem, sender, reply_to, msg)
     if msg.nil? then render :help
     else insult msg.capitalize end
   end
-  
+
   # Displays information about the leaf.
-  
+
   def about_command(stem, sender, reply_to, msg)
   end
-  
+
   private
-  
+
   ADJECTIVES = [
     'an artless', 'a bawdy', 'a beslubbering', 'a bootless', 'a churlish',
     'a clouted', 'a cockered', 'a craven', 'a currish', 'a dankish',
@@ -31,7 +31,7 @@ class Controller < Autumn::Leaf
     'a tottering', 'an unmuzzled', 'a vain', 'a venomed', 'a villainous',
     'a warped', 'a wayward', 'a weedy', 'a yeasty'
   ]
-  
+
   PARTICIPLES = [
     'base-court', 'bat-fowling', 'beef-witted', 'beetle-headed', 'boil-brained',
     'clapper-clawed', 'clay-brained', 'common-kissing', 'crook-pated',
@@ -45,7 +45,7 @@ class Controller < Autumn::Leaf
     'sheep-biting', 'spur-galled', 'swag-bellied', 'tardy-gaited',
     'tickle-brained', 'toad-spotted', 'urchin-snouted', 'weather-bitten'
   ]
-  
+
   NOUNS = [
     'apple-john', 'baggage', 'barnacle', 'bladder', 'boar-pig', 'bugbear',
     'bum-bailey', 'canker-blossom', 'clack-dish', 'clotpole', 'codpiece',
@@ -57,7 +57,7 @@ class Controller < Autumn::Leaf
     'pumpion', 'puttock', 'ratsbane', 'scut', 'skainsmate', 'strumpet',
     'varlet', 'vassal', 'wagtail', 'whey-face'
   ]
-  
+
   def insult(victim)
     var :adjective => ADJECTIVES.at_rand
     var :participle => PARTICIPLES.at_rand

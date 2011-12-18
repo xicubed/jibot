@@ -1,5 +1,5 @@
---- 
-event: 
+---
+event:
   621: :rpl_rules
   610: :rpl_isoper
   434: :err_norules

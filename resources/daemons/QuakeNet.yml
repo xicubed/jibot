@@ -1,9 +1,9 @@
---- 
-channel_mode: 
+---
+channel_mode:
   D: :deljoins
   d: :has_hidden
   u: :noquitparts
-event: 
+event:
   291: :rpl_endofcheck
   550: :err_badhostmask
   286: :rpl_chkhead

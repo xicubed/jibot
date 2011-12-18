@@ -1,5 +1,5 @@
---- 
-server_mode: 
+---
+server_mode:
   L: :default_language
   l: :lazy_leaf
   A: :auto_tbs
@@ -10,9 +10,9 @@ server_mode:
   F: :full
   H: :hidden
   T: :testlink
-channel_mode: 
+channel_mode:
   "!": :service
-event: 
+event:
   973: :err_cannotchangeumode
   687: :rpl_yourlanguageis
   665: :rpl_otherumodeis
@@ -41,16 +41,16 @@ event:
   301: :rpl_away
   4: :rpl_myinfo
   670: :rpl_whowasdetails
-user_prefix: 
+user_prefix:
   "!": :service
-usermode: 
+usermode:
   d: :deaf
   R: :no_non_registered
   g: :callerid
   s: :server_notices
   h: :helper
-channel_prefix: 
+channel_prefix:
   .: :softchan
   "~": :global
-privilege: 
+privilege:
   "!": :service

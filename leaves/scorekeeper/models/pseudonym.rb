@@ -3,9 +3,9 @@
 
 class Pseudonym
   include DataMapper::Resource
-  
+
   property :id, Integer, :serial => true
   property :name, String, :nullable => false
-  
+
   belongs_to :person
 end

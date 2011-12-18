@@ -457,9 +457,9 @@ wanted your bot to say something after each command:
 
  class Controller > Autumn::Leaf
    after_filter :outro
- 
+
    private
- 
+
    def outro_filter(stem, channel, sender, command, msg, opts)
      stem.message "This has been a production of OutroBot!", channel
    end
@@ -489,7 +489,7 @@ person's nick:
 
  class Controller < Autumn::Leaf
    before_filter :authenticate, :only => :quit, :admin => 'Yournick'
- 
+
    def authenticate_filter(stem, channel, sender, command, msg, opts)
      sender == opts[:admin]
    end

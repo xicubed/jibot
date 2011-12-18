@@ -1,5 +1,5 @@
---- 
-event: 
+---
+event:
   720: :rpl_omotdstart
   709: :rpl_etrace
   726: :rpl_notestline

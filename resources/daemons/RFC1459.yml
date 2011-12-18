@@ -1,5 +1,5 @@
---- 
-channel_mode: 
+---
+channel_mode:
   v: :voice
   k: :keylock
   l: :limit
@@ -11,7 +11,7 @@ channel_mode:
   s: :secret
   t: :topic_lock
   i: :invite_only
-event: 
+event:
   462: :err_alreadyregistered
   203: :rpl_traceunknown
   314: :rpl_whowasuser
@@ -142,17 +142,17 @@ event:
   221: :rpl_umodeis
   258: :rpl_adminloc2
   332: :rpl_topic
-user_prefix: 
+user_prefix:
   "@": :operator
   +: :voiced
-usermode: 
+usermode:
   w: :wallops
   o: :global_operator
   s: :server_notices
   i: :invisible
-channel_prefix: 
+channel_prefix:
   "#": :network
   "&": :local
-privilege: 
+privilege:
   v: :voiced
   o: :operator
