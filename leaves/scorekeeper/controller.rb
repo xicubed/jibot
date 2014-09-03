@@ -13,15 +13,15 @@ end
 # classes.
 
 class Controller < Autumn::Leaf
-  
+
   # Displays an about message.
-  
+
   def about_command(stem, sender, reply_to, msg)
   end
-  
+
   # Displays the current point totals, or modifies someone's score, depending on
   # the message provided with the command.
-  
+
   def points_command(stem, sender, reply_to, msg)
     if msg.nil? or msg.empty? then
       var :totals => totals(stem, reply_to)
@@ -35,9 +35,9 @@ class Controller < Autumn::Leaf
       render :usage
     end
   end
-  
+
   private
-  
+
   def points(stem, channel)
     chan = Channel.find_or_create :server => server_identifier(stem), :name => channel
     scores = chan.scores.all
@@ -67,11 +67,11 @@ class Controller < Autumn::Leaf
     var :receiver => receiver
     var :delta => delta
   end
-  
+
   def parse_history(stem, channel, subject, argument)
     date = argument.empty? ? nil : parse_date(argument)
     scores = Array.new
-    
+
     chan = Channel.first(:name => channel)
     person = find_person(stem, subject)
     if person.nil? then
@@ -79,7 +79,7 @@ class Controller < Autumn::Leaf
       var :no_history => true
       return
     end
-    
+
     if date then
       start, stop = find_range(date)
       scores = chan.scores.all(:conditions => [ "receiver_id = ? AND created_at >= ? AND created_at < ?", person.id, start, stop ], :order => [ :created_at.desc ])

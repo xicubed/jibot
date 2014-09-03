@@ -1,10 +1,10 @@
---- 
-server_mode: 
+---
+server_mode:
   s: :service
   h: :hub
-channel_mode: 
+channel_mode:
   r: :regonly
-event: 
+event:
   511: :err_silelistfull
   280: :rpl_glist
   247: :rpl_statsgline
@@ -58,7 +58,7 @@ event:
   439: :err_targettoofast
   340: :rpl_userip
   10: :rpl_statmem
-usermode: 
+usermode:
   k: :service
   x: :host_hiding
   d: :deaf

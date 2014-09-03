@@ -1,5 +1,5 @@
---- 
-event: 
+---
+event:
   379: :rpl_kicklinked
   291: :rpl_chaninfo_banned
   269: :rpl_end_netstat

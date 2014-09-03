@@ -1,8 +1,8 @@
---- 
-channel_mode: 
+---
+channel_mode:
   a: :hideops
   p: :private
-event: 
+event:
   247: :rpl_statsxline
   225: :rpl_statsdline
   484: :err_desync
@@ -17,9 +17,9 @@ event:
   14: :rpl_yourcookie
   246: :rpl_statsuline
   224: :rpl_statsfline
-user_prefix: 
+user_prefix:
   "%": :half_operator
-usermode: 
+usermode:
   k: :kills
   l: :locops
   a: :admin
@@ -34,5 +34,5 @@ usermode:
   r: :rej
   g: :callerid
   u: :unauth
-privilege: 
+privilege:
   h: :half_operator

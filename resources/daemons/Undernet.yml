@@ -1,5 +1,5 @@
---- 
-event: 
+---
+event:
   489: :err_voiceneeded
   484: :err_ischanservice
   396: :rpl_hosthidden

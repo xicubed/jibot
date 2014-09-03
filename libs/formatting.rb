@@ -2,7 +2,7 @@
 # protocols for IRC message stylization.
 
 module Autumn
-  
+
   # Adds text formatting to Autumn objects. Text formatting (color and styles)
   # is not a part of the original IRC spec, so many clients have come up with
   # many different ways of sending formatted text. The classes in this module
@@ -16,9 +16,9 @@ module Autumn
   # Where possible, all modules in the Formatting module follow an implicit
   # protocol, which includes methods like +color+, +bold+, +plain+, and
   # +underline+.
-  
+
   module Formatting
-    
+
     # The mIRC format is the oldest IRC text formatting protocol, written for
     # use with the mIRC client. Although mIRC formatting is by far the most
     # common and most widely supported, it is also has the fewest features. mIRC
@@ -39,7 +39,7 @@ module Autumn
     # token at the end of the colorized text:
     #
     #  "The system is: #{color(:red)}down#{UNCOLOR}!"
-    
+
     module Mirc
       # Insert this character to set all following text unformatted.
       PLAIN = 15.chr
@@ -49,7 +49,7 @@ module Autumn
       ITALIC = 22.chr
       # Insert this character to set all following text underlined.
       UNDERLINE = 31.chr
-      
+
       # The mIRC color code sentinel.
       COLOR_CODE = 3.chr
       # Insert this character to stop colorizing text.
@@ -86,7 +86,7 @@ module Autumn
         :light_gray => '15',
         :silver => '15'
       }
-      
+
       # Colors the following text with a foreground and background color. Colors
       # are a symbol in the COLORS hash. By default the background is left
       # uncolored. This method returns a string that should be prepended to the
@@ -119,7 +119,7 @@ module Autumn
 
       # Sets all following text underline.
       def underline; UNDERLINE; end
-      
+
       # Removes coloring from all following text. Options:
       #
       # +suppress_space+:: By default, this method places a space after the
@@ -129,10 +129,10 @@ module Autumn
         options[:suppress_space] ? UNCOLOR_NO_SPACE : UNCOLOR
       end
     end
-    
+
     # The default formatter for leaves that do not specify otherwise.
     DEFAULT = Mirc
-    
+
     # The ircle formatting system is an adaptation of the mIRC system, written
     # for use by the ircle Macintosh client. Its primary purpose is to improve
     # upon mIRC's lackluster color support. The ircle protocol is identical to
@@ -149,7 +149,7 @@ module Autumn
     #  "The system is: #{COLORS[:red]}down#{PLAIN}!"
     #
     # Note that there is no support for background coloring.
-    
+
     module Ircle
       # Insert this character to set all following text unformatted and
       # uncolored.
@@ -211,11 +211,11 @@ module Autumn
       # match the Mirc module. Removes all formatting and coloring on all
       # following text.
       UNCOLOR = PLAIN
-      
+
       # For purposes of cross-compatibility, this method has been added to match
       # the Mirc method with the same name. All inapplicable parameters and
       # color names are ignored.
-      
+
       def color(fgcolor, bgcolor=nil, options={})
         COLORS[fgcolor]
       end

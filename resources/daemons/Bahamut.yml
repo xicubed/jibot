@@ -1,12 +1,12 @@
---- 
-channel_mode: 
+---
+channel_mode:
   L: :listed
   M: :modreg
   c: :nocolour
   O: :oper_only
   R: :regonly
   r: :registered
-event: 
+event:
   522: :err_whosyntax
   225: :rpl_statszline
   605: :rpl_nowoff
@@ -51,7 +51,7 @@ event:
   604: :rpl_nowon
   329: :rpl_creationtime
   307: :rpl_whoisregnick
-usermode: 
+usermode:
   k: :kills
   A: :server_admin
   a: :services_admin

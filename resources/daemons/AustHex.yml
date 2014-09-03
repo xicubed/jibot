@@ -1,7 +1,7 @@
---- 
-channel_mode: 
+---
+channel_mode:
   e: :event
-event: 
+event:
   434: :err_servicenameinuse
   357: :rpl_map
   385: :rpl_notoperanymore
@@ -20,7 +20,7 @@ event:
   240: :rpl_statsxline
   378: :rpl_motd
   307: :rpl_suserhost
-usermode: 
+usermode:
   v: :host_hiding
   l: :listall
   a: :errors

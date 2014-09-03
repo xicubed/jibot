@@ -1,5 +1,5 @@
---- 
-channel_mode: 
+---
+channel_mode:
   V: :no_invite
   K: :noknock
   L: :link
@@ -17,7 +17,7 @@ channel_mode:
   S: :strip
   H: :no_hiding
   u: :auditorium
-event: 
+event:
   389: :rpl_endofalist
   294: :rpl_helpfwd
   484: :err_attackdeny
@@ -86,7 +86,7 @@ event:
   607: :rpl_endofwatchlist
   227: :rpl_statsvline
   379: :rpl_whoismodes
-usermode: 
+usermode:
   V: :webtv
   v: :victim
   W: :whois_paranoia
